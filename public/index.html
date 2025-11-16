@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mini Todo App</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 600px;
+        margin: 20px auto;
+      }
+      h1 {
+        text-align: center;
+      }
+      #todoForm {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      #todoForm input {
+        flex: 1;
+        padding: 8px;
+      }
+      #todoForm button {
+        padding: 8px 16px;
+        cursor: pointer;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+      li {
+        padding: 8px;
+        border: 1px solid #ddd;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .delete-btn {
+        cursor: pointer;
+      }
+      li {
+  padding: 8px;
+  border: 1px solid #ddd;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+li button {
+  margin-left: 6px;
+}
+
+    </style>
+  </head>
+  <body>
+    <h1>Todo App (Backend Connected)</h1>
+
+    <form id="todoForm">
+      <input
+        type="text"
+        id="todoInput"
+        placeholder="Enter todo title"
+        required
+      />
+      <button type="submit">Add</button>
+    </form>
+
+    <ul id="todoList"></ul>
+
+    <script>
+      const API_BASE = "http://localhost:8000/api/todos";
+
+      const todoForm = document.getElementById("todoForm");
+      const todoInput = document.getElementById("todoInput");
+      const todoList = document.getElementById("todoList");
+
+      // Saare todos load karo
+      
+async function fetchTodos() {
+  try {
+    const res = await fetch(`${API_BASE}/gettodos`);
+    const data = await res.json();
+
+    todoList.innerHTML = "";
+
+    (data.todos || []).forEach((todo) => {
+      const li = document.createElement("li");
+
+      // title span
+      const titleSpan = document.createElement("span");
+      titleSpan.textContent = todo.title;
+
+      // buttons container
+      const buttonsDiv = document.createElement("div");
+
+      // Edit button
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "Edit";
+      editBtn.onclick = () => {
+        const newTitle = prompt("Enter new title", todo.title);
+        if (newTitle && newTitle.trim()) {
+          updateTodo(todo._id, newTitle.trim());
+        }
+      };
+
+      // Delete button
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "Delete";
+      delBtn.className = "delete-btn";
+      delBtn.onclick = () => deleteTodo(todo._id);
+
+      // buttons ko add karo
+      buttonsDiv.appendChild(editBtn);
+      buttonsDiv.appendChild(delBtn);
+
+      // li me title + buttons add karo
+      li.appendChild(titleSpan);
+      li.appendChild(buttonsDiv);
+
+      todoList.appendChild(li);
+    });
+  } catch (err) {
+    console.error("Error fetching todos:", err);
+  }
+}
+
+      // Naya todo create karo
+      async function createTodo(title) {
+        try {
+          const res = await fetch(`${API_BASE}/createtodo`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title }),
+          });
+
+          const data = await res.json();
+          console.log("Created:", data);
+          await fetchTodos();
+        } catch (err) {
+          console.error("Error creating todo:", err);
+        }
+      }
+
+      // Todo delete karo
+      async function deleteTodo(id) {
+        try {
+          const res = await fetch(`${API_BASE}/deletetodo/${id}`, {
+            method: "DELETE",
+          });
+
+          const data = await res.json();
+          console.log("Deleted:", data);
+          await fetchTodos();
+        } catch (err) {
+          console.error("Error deleting todo:", err);
+        }
+      }
+async function updateTodo(id, newTitle) {
+  try {
+    const res = await fetch(`${API_BASE}/updatetodo/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title: newTitle }),
+    });
+
+    const data = await res.json();
+    console.log("Updated:", data);
+    await fetchTodos();
+  } catch (err) {
+    console.error("Error updating todo:", err);
+  }
+}
+
+      // Form submit handle
+      todoForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const title = todoInput.value.trim();
+        if (!title) return;
+        createTodo(title);
+        todoInput.value = "";
+      });
+
+      // Page load hote hi todos fetch
+      fetchTodos();
+    </script>
+  </body>
+</html>
