@@ -3,20 +3,20 @@ const Todo = require("../models/Todo");
 // POST: naya todo create kare aur DB me save kare
 const createTodo = async (req, res) => {
   try {
-    const { title } = req.body;
+    const { title ,completed} = req.body;
 
     if (!title) {
       return res.status(400).json({ message: "Title is required" });
     }
 
-    const newTodo = await Todo.create({ title });
+    const todo = await Todo.create({ title,completed:completd??false, });
 
     res.status(201).json({
       message: "Todo Created",
-      todo: newTodo,
+      todo
     });
   } catch (error) {
-    console.error("Error in createTodo:", error);
+    console.error("Error creating Todo:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -39,29 +39,25 @@ const getTodos = async (req, res) => {
 
 const updateTodo = async (req, res) => {
   try {
-    const { id } = req.params;          // URL se id
-    const { title } = req.body;         // body se new title
-
-    if (!title) {
-      return res.status(400).json({ message: "Title is required" });
+    const todoId = req.params.id;          // URL se id
+    const { title,completed } = req.body;         // body se new title
+const updateData={};
+    if (title!==undefined)updateData.title=title;
+    if(completed!==undefined)updateData.completed=completed;
+    const todo = await Todo.findByIdAndUpdate(todoId,updateData,{
+      new:true,
+    });
+    if(!todo) {
+      return res.status(400).json({ message: "Todo not found" });
     }
 
-    const updatedTodo = await Todo.findByIdAndUpdate(
-      id,
-      { title },
-      { new: true, runValidators: true }
-    );
-
-    if (!updatedTodo) {
-      return res.status(404).json({ message: "Todo not found" });
-    }
-
+    
     res.json({
       message: "Todo Updated",
-      todo: updatedTodo,
+      todo
     });
   } catch (error) {
-    console.error("Error in updateTodo:", error);
+    console.error("Error updating Todo:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

@@ -52,6 +52,9 @@
 li button {
   margin-left: 6px;
 }
+li span{
+  font-size: 16px;
+}
 
     </style>
   </head>
@@ -89,10 +92,20 @@ async function fetchTodos() {
     (data.todos || []).forEach((todo) => {
       const li = document.createElement("li");
 
+ // checkbox for completed
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = todo.completed === true;
+      checkbox.onchange = () => {
+        toggleCompleted(todo._id, checkbox.checked);
+      };
       // title span
       const titleSpan = document.createElement("span");
       titleSpan.textContent = todo.title;
-
+if(todo.completed){
+  titleSpan.style.textDecoration="line-through";
+  titleSpan.style.opacity="0.6";
+}
       // buttons container
       const buttonsDiv = document.createElement("div");
 
@@ -115,9 +128,17 @@ async function fetchTodos() {
       // buttons ko add karo
       buttonsDiv.appendChild(editBtn);
       buttonsDiv.appendChild(delBtn);
+// left side pe checkbox + title
+      const leftDiv = document.createElement("div");
+      leftDiv.style.display = "flex";
+      leftDiv.style.alignItems = "center";
+      leftDiv.style.gap = "8px";
+
+      leftDiv.appendChild(checkbox);
+      leftDiv.appendChild(titleSpan);
 
       // li me title + buttons add karo
-      li.appendChild(titleSpan);
+      li.appendChild(leftDiv);
       li.appendChild(buttonsDiv);
 
       todoList.appendChild(li);
@@ -140,6 +161,7 @@ async function fetchTodos() {
 
           const data = await res.json();
           console.log("Created:", data);
+          todoInput.value="";
           await fetchTodos();
         } catch (err) {
           console.error("Error creating todo:", err);
@@ -175,6 +197,23 @@ async function updateTodo(id, newTitle) {
     await fetchTodos();
   } catch (err) {
     console.error("Error updating todo:", err);
+  }
+}
+async function toggleCompleted(id, completed) {
+  try {
+    const res = await fetch(`${API_BASE}/updatetodo/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ completed }),
+    });
+
+    const data = await res.json();
+    console.log("Toggled:", data);
+    await fetchTodos();
+  } catch (err) {
+    console.error("Error toggling todo:", err);
   }
 }
 
