@@ -1,4 +1,6 @@
 const express = require("express");
+const router = express.Router();
+
 const {
     createTodo,
     getTodos,
@@ -8,7 +10,7 @@ const {
 }=require("../controllers/todoController");
 
 
-const router = express.Router();
+
 router.get("/gettodos", getTodos);
 
 router.post("/createtodo", createTodo);

@@ -3,23 +3,37 @@ const Todo = require("../models/Todo");
 // POST: naya todo create kare aur DB me save kare
 const createTodo = async (req, res) => {
   try {
-    const { title ,completed} = req.body;
+    const { title, completed } = req.body;
 
-    if (!title) {
-      return res.status(400).json({ message: "Title is required" });
-    }
-
-    const todo = await Todo.create({ title,completed:completd??false, });
+    const todo = await Todo.create({
+      title,
+      completed: completed ?? false,
+    });
 
     res.status(201).json({
-      message: "Todo Created",
-      todo
+      success: true,
+      message: "Todo created successfully",
+      todo,
     });
   } catch (error) {
-    console.error("Error creating Todo:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error creating todo:", error);
+
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((err) => err.message);
+      return res.status(400).json({
+        success: false,
+        message: "Validation failed",
+        errors: messages,
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 };
+
 
 // GET: saare todos DB se laao
 const getTodos = async (req, res) => {

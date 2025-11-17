@@ -4,81 +4,213 @@
     <meta charset="UTF-8" />
     <title>Mini Todo App</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        max-width: 600px;
-        margin: 20px auto;
-      }
-      h1 {
-        text-align: center;
-      }
-      #todoForm {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
-      }
-      #todoForm input {
-        flex: 1;
-        padding: 8px;
-      }
-      #todoForm button {
-        padding: 8px 16px;
-        cursor: pointer;
-      }
-      ul {
-        list-style: none;
-        padding: 0;
-      }
-      li {
-        padding: 8px;
-        border: 1px solid #ddd;
-        margin-bottom: 8px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      .delete-btn {
-        cursor: pointer;
-      }
-      li {
-  padding: 8px;
-  border: 1px solid #ddd;
-  margin-bottom: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+       * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
 
-li button {
-  margin-left: 6px;
-}
-li span{
-  font-size: 16px;
-}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 16px;
+      background: linear-gradient(135deg, #eef2ff, #fdf2ff);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 24px 20px 20px;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
+      border: 1px solid #e5e7eb;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 24px;
+      text-align: center;
+      color: #111827;
+    }
+
+    p.subtitle {
+      margin: 0 0 20px;
+      font-size: 13px;
+      text-align: center;
+      color: #6b7280;
+    }
+
+    #todo-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    #todo-input {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #d1d5db;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    #todo-input:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.35);
+    }
+
+    #todo-form button[type="submit"] {
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: none;
+      background: #4f46e5;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+
+    #todo-form button[type="submit"]:hover {
+      background: #4338ca;
+      box-shadow: 0 8px 18px rgba(79, 70, 229, 0.35);
+      transform: translateY(-1px);
+    }
+
+    #todo-form button[type="submit"]:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    #todo-list {
+      list-style: none;
+      padding: 0;
+      margin: 4px 0 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    #todo-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 10px;
+      background: #f9fafb;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+    }
+
+    #todo-list li:hover {
+      background: #f3f4ff;
+      border-color: #c7d2fe;
+    }
+
+    #todo-list li > div:first-child {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    #todo-list input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: #4f46e5;
+    }
+
+    #todo-list span {
+      font-size: 14px;
+      color: #111827;
+      word-break: break-word;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 6px;
+    }
+
+    .buttons button {
+      border: none;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+      white-space: nowrap;
+    }
+
+    .buttons button:hover {
+      transform: translateY(-0.5px);
+      box-shadow: 0 4px 10px rgba(148, 163, 184, 0.5);
+    }
+
+    .buttons button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .buttons .edit-btn {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .buttons .delete-btn {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .empty-state {
+      font-size: 13px;
+      color: #9ca3af;
+      text-align: center;
+      margin-top: 8px;
+    }
 
     </style>
   </head>
   <body>
+    <div class="container">
     <h1>Todo App (Backend Connected)</h1>
-
-    <form id="todoForm">
+<p class="subtitle"> Add your task , mark as complete , edit or delete</p>
+    <form id="todo-form">
       <input
         type="text"
-        id="todoInput"
+        id="todo-input"
         placeholder="Enter todo title"
-        required
+        
       />
       <button type="submit">Add</button>
     </form>
 
-    <ul id="todoList"></ul>
-
+    <ul id="todo-list"></ul>
+<p class="empty-state" id="empty-state">no task yet . add yours...</p>
+    </div>
     <script>
       const API_BASE = "http://localhost:8000/api/todos";
 
-      const todoForm = document.getElementById("todoForm");
-      const todoInput = document.getElementById("todoInput");
-      const todoList = document.getElementById("todoList");
+      const form = document.getElementById("todo-form");
+      const todoInput = document.getElementById("todo-input");
+      const todoList = document.getElementById("todo-list");
+      const emptyState= document.getElementById("empty-state");
+      form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const title = todoInput.value.trim();
+  if (!title) return;
+  createTodo(title);
+});
 
       // Saare todos load karo
       
@@ -88,6 +220,13 @@ async function fetchTodos() {
     const data = await res.json();
 
     todoList.innerHTML = "";
+const todos = data.todos || [];
+
+if (todos.length === 0) {
+  emptyState.style.display = "block";
+} else {
+  emptyState.style.display = "none";
+}
 
     (data.todos || []).forEach((todo) => {
       const li = document.createElement("li");
@@ -217,17 +356,11 @@ async function toggleCompleted(id, completed) {
   }
 }
 
-      // Form submit handle
-      todoForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const title = todoInput.value.trim();
-        if (!title) return;
-        createTodo(title);
-        todoInput.value = "";
-      });
+    
 
       // Page load hote hi todos fetch
       fetchTodos();
     </script>
+    
   </body>
 </html>
